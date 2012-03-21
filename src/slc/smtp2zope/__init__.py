@@ -56,8 +56,12 @@ def main():
         sys.exit(0)
 
     # If not found, permanent error
+    if status == 401:
+        sys.exit(77) # EX_NOPERM
     if status == 404:
-        sys.exit(1)
+        sys.exit(67) # EX_NOUSER
+    if status / 100 == 4:
+        sys.exit(78) # EX_CONFIG
 
     # Otherwise, defer it, try again later.
-    sys.exit(75)
+    sys.exit(75) # EX_TEMPFAIL
