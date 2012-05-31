@@ -39,7 +39,11 @@ def main():
     message = sys.stdin.read()
     h = httplib.HTTPConnection(options.zope)
     h.request('POST', options.url, message)
-    response = h.getresponse()
+    try:
+        response = h.getresponse()
+    except httplib.BadStatusLine as bsl:
+        logging.info(bsl)
+        sys.exit(75) # EX_TEMPFAIL
     status = response.status
     response = response.read()
 
