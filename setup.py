@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.2dev2'
+version = '0.2.dev0'
 
 setup(
     name='slc.smtp2zope',
