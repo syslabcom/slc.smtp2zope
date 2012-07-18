@@ -29,6 +29,6 @@ setup(
         [console_scripts]
         smtp2zope = slc.smtp2zope:main
     """,
-    setup_requires=["PasteScript"],
+    setup_requires=[],
     paster_plugins = ["ZopeSkel"],
     )
