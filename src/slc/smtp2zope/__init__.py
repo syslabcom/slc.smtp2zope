@@ -10,6 +10,7 @@
 import sys
 import logging
 import httplib
+import socket
 from optparse import OptionParser
 
 def main():
@@ -37,13 +38,16 @@ def main():
         format='%(asctime)s %(levelname)s %(message)s')
 
     message = sys.stdin.read()
-    h = httplib.HTTPConnection(options.zope)
-    h.request('POST', options.url, message)
-    response = h.getresponse()
+    try:
+        h = httplib.HTTPConnection(options.zope)
+        h.request('POST', options.url, message)
+        response = h.getresponse()
+    except (socket.error, socket.timeout, httplib.HTTPException), e:
+        logging.error(e)
+        sys.exit(75) # EX_TEMPFAIL
     status = response.status
     response = response.read()
 
-    logging.info(response)
 
     # By default, exim will treat EX_TEMPFAIL (75) as a temporary error.
     # Postfix also treats 75 as temporary.
@@ -53,8 +57,11 @@ def main():
 
     # If a 2xx is returned, we exit status 0, delivery done.
     if status / 100 == 2:
+        logging.info(response)
         sys.exit(0)
 
+    # If status is not 200, the response should hold an error message
+    logging.error(response)
     # If not found, permanent error
     if status == 401:
         sys.exit(77) # EX_NOPERM
