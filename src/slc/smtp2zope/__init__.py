@@ -43,7 +43,8 @@ def main():
         h.request('POST', options.url, message)
         response = h.getresponse()
     except httplib.BadStatusLine as bsl:
-        logging.info(bsl)
+        logging.info('BadStatusLine: %s' % bsl)
+        sys.exit(78) # EX_CONFIG
     except (socket.error, socket.timeout, httplib.HTTPException), e:
         logging.error(e)
         sys.exit(75) # EX_TEMPFAIL
